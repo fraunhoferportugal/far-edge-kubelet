@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  validate:
+    uses: ./.gitea/workflows/validate.yaml
+
+  build-and-publish:
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Golang
+        uses: actions/setup-go@v5
+        with:
+          go-version: ~1.23
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to the Gitea registry
+        uses: docker/login-action@v3
+        with:
+          registry: gitea.lab.fraunhofer.pt          
+          username: ${{ vars.ACTIONS_USER }}        # Only needed in Gitea
+          password: ${{ secrets.ACTIONS_TOKEN }}    #   Github generates a token by workflow run, ${{ GITHUB_TOKEN }}, that can be used with the ${{ github.repository_owner }} user
+                                                    #   An "actions" user is responsible by pushing to the package
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: registry.lab.fraunhofer.pt          
+          username: ${{ vars.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: "2.9.0"
+          args: --config .goreleaser.yaml --clean
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+
+      - name: Publish archives as artifacts
+        uses: christopherhx/gitea-upload-artifact@v4
+        with:
+          name: build-archives
+          path: |
+            ./dist/*.tar.gz
+            ./dist/*.tar.gz.sha256

@@ -1,0 +1,56 @@
+name: Validate
+
+on:
+  workflow_call:
+
+  pull_request:
+    branches:
+      - master
+      - development
+  push:
+    branches:
+      - development
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  lint:
+    name: Lint code and check formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ~1.23
+      - uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.1
+          only-new-issues: true
+
+  test:
+    name: Test code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ~1.23
+      - run: |
+          make coverage
+      - name: Publish coverage dir as an artifact
+        uses: christopherhx/gitea-upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            ./coverage
+
+      - name: Generate html coverage report
+        run: make coverage-report-file
+      - name: Publish coverage html report
+        uses: christopherhx/gitea-upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            ./coverage/merged.html
