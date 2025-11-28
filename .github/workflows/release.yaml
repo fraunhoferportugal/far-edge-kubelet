@@ -13,60 +13,22 @@ jobs:
     outputs:
       semver-valid: ${{ steps.check-tag.outputs.valid }}
     steps:
+      - uses: actions/checkout@v6
       - name: Check if tag is a valid SemVer
         id: check-tag
         run: |
-          python3 - << 'EOF'
-          import os, re, sys
-
-          tag = os.getenv("TAG")
-          if tag is None:
-              print('No tag provided')
-              sys.exit(1)
-
-          semver = re.compile(
-              r"""
-              ^v?
-              (0|[1-9]\d*)\.
-              (0|[1-9]\d*)\.
-              (0|[1-9]\d*)
-              (?:-
-                  (
-                      (?:0|[1-9]\d*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)
-                      (?:\.
-                          (?:0|[1-9]\d*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)
-                      )*
-                  )
-              )?
-              (?:\+
-                  ([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)
-              )?
-              $
-              """,
-              re.VERBOSE,
-          )
-
-          if not semver.match(tag):
-              print(f"Invalid SemVer: {tag}")
-              with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-                f.write("valid=false\n")
-              sys.exit(0)
-
-          print(f"Valid SemVer: {tag}")
-          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-            f.write("valid=true\n")
-          EOF
+          python3 -u .github/scripts/semver_regex.py
         env:
           TAG: ${{ github.ref_name }}
 
-  # validate:
-  #   needs: [validate-tag]
-  #   if: needs.validate-tag.outputs.semver-valid == 'true'
-  #   uses: ./.github/workflows/validate.yaml
+  validate:
+    needs: [validate-tag]
+    if: needs.validate-tag.outputs.semver-valid == 'true'
+    uses: ./.github/workflows/validate.yaml
 
   build-and-publish:
     runs-on: self-hosted
-    # needs: validate
+    needs: validate
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
