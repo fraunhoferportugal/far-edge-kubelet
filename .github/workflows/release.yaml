@@ -12,6 +12,7 @@ on:
   workflow_call:
     inputs:
       tag:
+        description: "Tag to release"
         required: false
         type: string
         default: ""
@@ -31,8 +32,8 @@ jobs:
       - name: Determine tag
         id: tag
         run: |
-          if [ -n "${{ github.event.inputs.tag }}" ]; then
-            TAG_NAME="${{ github.event.inputs.tag }}"
+          if [ -n "${{ inputs.tag }}" ]; then
+            TAG_NAME="${{ inputs.tag }}"
           elif [[ "$GITHUB_REF" =~ refs/tags/(.+) ]]; then
             TAG_NAME="${BASH_REMATCH[1]}"
           else
@@ -56,7 +57,7 @@ jobs:
 
   build-and-publish:
     runs-on: self-hosted
-    # needs: validate
+    # needs: test-and-lint
     needs: validate-tag
     steps:
       - name: Checkout code
