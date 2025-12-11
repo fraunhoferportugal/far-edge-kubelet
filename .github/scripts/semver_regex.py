@@ -33,6 +33,5 @@ def main():
     with open(gh_output_path, "a") as f:
         f.write("valid=true")
 
-
 if __name__ == "__main__":
     main()

@@ -36,8 +36,8 @@ dockers:
     build_flag_templates:
       - --platform=linux/amd64
     image_templates:
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:latest-amd64
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-amd64
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:latest-amd64
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-amd64
     extra_files:
       - deploy/configuration-data
     dockerfile: Dockerfile
@@ -47,8 +47,8 @@ dockers:
     build_flag_templates:
       - --platform=linux/arm64
     image_templates:
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:latest-arm64
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-arm64
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:latest-arm64
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-arm64
     extra_files:
       - deploy/configuration-data
     dockerfile: Dockerfile
@@ -59,8 +59,8 @@ dockers:
     build_flag_templates:
       - --platform=linux/arm/v7
     image_templates:
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:latest-arm
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-arm-v7
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:latest-arm-v7
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-arm-v7
     extra_files:
       - deploy/configuration-data
     dockerfile: Dockerfile
@@ -68,29 +68,29 @@ dockers:
 
 docker_manifests:
   - id: tag
-    name_template: ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}
+    name_template: ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}
     image_templates:
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-amd64
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-arm64
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-arm-v7
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-amd64
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-arm64
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-arm-v7
   - id: latest
-    name_template: ghcr.io/fraunhoferportugal/far-edge-kubelet:latest
+    name_template: ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:latest
     image_templates:
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-amd64
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-arm64
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-arm-v7
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-amd64
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-arm64
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-arm-v7
   - id: major
-    name_template: ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Major }}
+    name_template: ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Major }}
     image_templates:
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-amd64
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-arm64
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-arm-v7
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-amd64
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-arm64
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-arm-v7
   - id: minor
-    name_template: 'ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Major }}.{{ .Minor }}'
+    name_template: 'ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Major }}.{{ .Minor }}'
     image_templates:
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-amd64
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-arm64
-      - ghcr.io/fraunhoferportugal/far-edge-kubelet:{{ .Tag }}-arm-v7
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-amd64
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-arm64
+      - ghcr.io/fraunhoferportugal/fita/components/far-edge-kubelet:{{ .Tag }}-arm-v7
 
 checksum:
   split: true
