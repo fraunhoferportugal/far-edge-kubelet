@@ -1,4 +1,4 @@
-name: Tag PR Head Commit Based on Comment
+name: Tag on PR merged to main
 
 on:
   pull_request:
@@ -39,13 +39,13 @@ jobs:
     outputs:
       new_tag: ${{ steps.tag.outputs.new_tag }}
     steps:
+      - name: Install RelSync
+        run: pip install git+https://github.com/fraunhoferportugal/RelSync.git@main
+
       - name: Checkout repo
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
-      - name: Install RelSync
-        run: pip install .
 
       - name: Set up Git
         run: |
