@@ -81,3 +81,9 @@ jobs:
       - name: Push the new tag
         run: |
           git push origin ${{ steps.tag.outputs.new_tag }}
+
+  release:
+    needs: create-tag
+    uses: ./.github/workflows/release.yaml
+    with:
+      tag: ${{ needs.create-tag.outputs.new_tag }}
