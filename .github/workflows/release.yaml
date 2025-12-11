@@ -59,6 +59,9 @@ jobs:
     runs-on: self-hosted
     # needs: test-and-lint
     needs: validate-tag
+    permissions:
+      contents: write
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
