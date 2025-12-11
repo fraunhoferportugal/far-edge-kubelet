@@ -1,4 +1,4 @@
-name: Validate
+name: Test and Lint
 
 on:
   workflow_call:

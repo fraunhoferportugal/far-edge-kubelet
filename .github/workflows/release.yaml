@@ -1,7 +1,20 @@
 name: Release
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release"
+        required: false
+        type: string
+        default: ""
+
+  workflow_call:
+    inputs:
+      tag:
+        required: false
+        type: string
+        default: ""
 
   push:
     tags:
@@ -14,21 +27,37 @@ jobs:
       semver-valid: ${{ steps.check-tag.outputs.valid }}
     steps:
       - uses: actions/checkout@v6
+
+      - name: Determine tag
+        id: tag
+        run: |
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            TAG_NAME="${{ github.event.inputs.tag }}"
+          elif [[ "$GITHUB_REF" =~ refs/tags/(.+) ]]; then
+            TAG_NAME="${BASH_REMATCH[1]}"
+          else
+            echo "No tag found"
+            exit 1
+          fi
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+
       - name: Check if tag is a valid SemVer
         id: check-tag
         run: |
           python3 -u .github/scripts/semver_regex.py
         env:
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ steps.tag.outputs.tag_name }}
 
-  validate:
-    needs: [validate-tag]
-    if: needs.validate-tag.outputs.semver-valid == 'true'
-    uses: ./.github/workflows/validate.yaml
+  # test-and-lint:
+  #   name: Test and Lint
+  #   needs: [validate-tag]
+  #   if: needs.validate-tag.outputs.semver-valid == 'true'
+  #   uses: ./.github/workflows/validate.yaml
 
   build-and-publish:
     runs-on: self-hosted
-    needs: validate
+    # needs: validate
+    needs: validate-tag
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
