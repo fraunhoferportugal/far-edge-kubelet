@@ -14,7 +14,7 @@ permissions:
 jobs:
   check-skip:
     if: github.event.pull_request.merged == true
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     outputs:
       skip-tag: ${{ steps.check.outputs.skip-tag }}
 
@@ -47,6 +47,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          ssh-key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
 
       - name: Set up Git
         run: |
@@ -88,3 +89,31 @@ jobs:
     uses: ./.github/workflows/release.yaml
     with:
       tag: ${{ needs.create-tag.outputs.new_tag }}
+
+  sync-development:
+    name: Sync development branch
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: development
+          ssh-key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge main into development
+        run: |
+          git fetch origin main
+          git merge --no-ff origin/main -m "Merge main into development after release ${{ needs.create-tag.outputs.new-tag }}" || true
+
+      - name: Push changes
+        run: |
+          git push origin development
