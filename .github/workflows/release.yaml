@@ -49,16 +49,15 @@ jobs:
         env:
           TAG: ${{ steps.tag.outputs.tag_name }}
 
-  # test-and-lint:
-  #   name: Test and Lint
-  #   needs: [validate-tag]
-  #   if: needs.validate-tag.outputs.semver-valid == 'true'
-  #   uses: ./.github/workflows/validate.yaml
+  test-and-lint:
+    name: Test and Lint
+    needs: [validate-tag]
+    if: needs.validate-tag.outputs.semver-valid == 'true'
+    uses: ./.github/workflows/test-and-lint.yaml
 
   build-and-publish:
     runs-on: ubuntu-latest
-    # needs: test-and-lint
-    needs: validate-tag
+    needs: ["validate-tag", "test-and-lint"]
     permissions:
       contents: write
       packages: write
