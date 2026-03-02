@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Improvements to Far-Edge-Kubelet
+about: Improvements to Far-Edge Kubelet
 title: "[FEATURE] "
 labels: ["feature-request", "needs-triage"]
 ---
@@ -8,7 +8,7 @@ labels: ["feature-request", "needs-triage"]
 Provide a clear and concise description of the desired feature or enhancement.
 
 ## Motivation / Use Case
-Explain **why this feature is needed** and how it will improve the far-edge-kubelet components. Include specific scenarios or problems it solves.
+Explain **why this feature is needed** and how it will improve the Far-Edge kubelet component. Include specific scenarios or problems it solves.
 
 ## Proposed Solution (Optional)
 If you have ideas on how to implement this, describe them briefly.  
