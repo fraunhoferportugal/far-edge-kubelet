@@ -20,7 +20,6 @@ What did you expect to happen?
 What actually happened? Include logs or screenshots if possible.
 
 ## Environment
-- Repository / Component: `far-edge-kubelet | far-edge-node-watcher | far-edge-connection-provisioner`
 - Version / Commit:  
 - OS / Architecture:  
 - Go / Toolchain version:  
