@@ -77,7 +77,8 @@ The workflow will validate the provided tag is a valid SemVer string,
 run the `Test and Lint` workflow against the tagged commit,
 and, finally, use [GoReleaser](https://goreleaser.com/) to build binaries and
 container images for the supported platforms (amd64, arm64 and armv7),
-create a draft release in GitHub with the built artifacts.
+and to create a draft release in GitHub with the built artifacts.
+GoReleaser also pushes the created container images to the GitHub registry.
 
 ## Issue reports and Feature Requests
 When opening an issue make sure you are targeting the correct FITA sub-repo. You can check them anytime in the [architecture docs](https://fraunhoferportugal.github.io/fita/docs/) and in the main repo in the [`components/` directory](https://github.com/fraunhoferportugal/fita/tree/development/components).
