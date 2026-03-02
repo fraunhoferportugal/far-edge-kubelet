@@ -22,7 +22,7 @@ Thanks for wanting to contribute! This file explains the minimal rules we follow
     - Go (>=1.23)
     - `make`
     - bash
-    - Docker (only if building images locally),
+    - Docker (only if building images locally)
     - Kubernetes cluster (for testing)
 - Build: `make build` / `make build-image`
 - Unit tests: `make test`
@@ -88,4 +88,4 @@ In your issue report, please include the following:
 - Version/commit hash
 - Relevant logs and config snippets
 
-If you're submitting a feature requst, please include a motivation or use case for your request and, optionally, a solution proposal.
+If you're submitting a feature request, please include a motivation or use case for your request and, optionally, a solution proposal.
