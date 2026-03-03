@@ -37,7 +37,7 @@ Thanks for wanting to contribute! This file explains the minimal rules we follow
     - Added/updated tests where applicable
     - Unit tests pass
     - Code follows linting/formatting rules (`make lint` and `make format` don't report issues)
-- At least two approving review from a maintainer required. Maintainers may request changes — please address them with new commits on the same branch.
+- At least two approving reviews from maintainers are required. Maintainers may request changes — please address them with new commits on the same branch.
 
 ### CI checks (required)
 All PRs must pass CI before merge:
@@ -52,7 +52,7 @@ This repository uses labels to help with some management tasks.
 | Label | Description |
 | --- | --- |
 | `no-tag` | Keeps workflows from tagging the merge commit in the `main` branch and creating a release draft on pull requests merges targeting main. |
-| `needs-triage` | Default label, indicating a maintainer is to correctly tag the issue |
+| `needs-triage` | Default label, requiring a maintainer review to correctly tag the issue |
 
 ## Version Management
 
@@ -73,7 +73,7 @@ This workflow is triggered either by a tag being pushed to the repository,
 by the `Tag on PR merged to main` workflow,
 or manually via a workflow dispatch using an existing tag as its argument.
 
-The workflow will validate the provided tag is a valid SemVer string,
+The workflow will validate if the provided tag is a valid SemVer string,
 run the `Test and Lint` workflow against the tagged commit,
 and, finally, use [GoReleaser](https://goreleaser.com/) to build binaries and
 container images for the supported platforms (amd64, arm64 and armv7),
@@ -81,7 +81,7 @@ and to create a draft release in GitHub with the built artifacts.
 GoReleaser also pushes the created container images to the GitHub registry.
 
 ## Issue reports and Feature Requests
-When opening an issue make sure you are targeting the correct FITA sub-repo. You can check them anytime in the [architecture docs](https://fraunhoferportugal.github.io/fita/docs/) and in the main repo in the [`components/` directory](https://github.com/fraunhoferportugal/fita/tree/development/components).
+When opening an issue make sure you are targeting the correct FITA sub-repo. You can check them anytime in the [architecture docs](https://fraunhoferportugal.github.io/fita/docs/) or in the main repo's [`components/` directory](https://github.com/fraunhoferportugal/fita/tree/development/components).
 
 In your issue report, please include the following:
 - Reproduction steps
