@@ -32,6 +32,11 @@ var InstanceInUse []int
 
 //var mutex sync.Mutex // Mutex for protecting shared variable
 
+type Payload struct {
+	Operation string      `json:"operation"`
+	Data      interface{} `json:"data,omitempty"`
+}
+
 func Connect(node_name string, broker_uri string, broker_port string) (bool, error) {
 	var err error
 	mqttClient, err = ConnectToMQTTBroker(node_name, broker_uri, broker_port)
@@ -141,10 +146,20 @@ func GetNodeAddress(far_edge_node_id string) (string, error) {
 	response_topic := id.String()
 	response_topic = strings.ReplaceAll(response_topic, "-", "")
 
+	var err error
+	var payloadBytes []byte
+	if payloadBytes, err = json.Marshal(
+		Payload{
+			Operation: "GET",
+		}); err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+
 	pb := &paho.Publish{
 		Topic:   far_edge_node_id + "/Connectivity_Monitoring/0",
 		QoS:     1,
-		Payload: []byte(`{"operation": "GET"}`),
+		Payload: payloadBytes,
 
 		Properties: &paho.PublishProperties{
 			ResponseTopic: response_topic,
@@ -167,7 +182,6 @@ func GetNodeAddress(far_edge_node_id string) (string, error) {
 		return "", err
 	}
 
-	var err error
 	if _, err = mqttClient.Publish(context.Background(), pb); err != nil {
 		mqttClient.Unsubscribe(context.Background(), uns)
 		fmt.Println(err)
@@ -225,10 +239,23 @@ func CreateSwMngtInstance(far_edge_node_id string, instance_id string) error {
 	response_topic = strings.ReplaceAll(response_topic, "-", "")
 	fmt.Println(response_topic)
 
+	var err error
+	var payloadBytes []byte
+	if payloadBytes, err = json.Marshal(
+		Payload{
+			Operation: "POST",
+			Data: map[string]interface{}{
+				"label": instance_id,
+			},
+		}); err != nil {
+		fmt.Println(err)
+		return err
+	}
+
 	pb := &paho.Publish{
 		Topic:   far_edge_node_id + "/LWM2M_Software_Management",
 		QoS:     1, // whatever value you want (0,1,2)
-		Payload: []byte(`{"operation": "POST","data": "{\"label\": \"` + instance_id + `\"}"}`),
+		Payload: payloadBytes,
 
 		Properties: &paho.PublishProperties{
 			ResponseTopic: response_topic,
@@ -251,8 +278,8 @@ func CreateSwMngtInstance(far_edge_node_id string, instance_id string) error {
 		return err
 	}
 
-	var err error
-	if _, err = mqttClient.Publish(context.Background(), pb); err != nil {
+	//var err error
+	if _, err := mqttClient.Publish(context.Background(), pb); err != nil {
 		mqttClient.Unsubscribe(context.Background(), uns)
 		fmt.Println(err)
 		return err
@@ -337,19 +364,37 @@ func AddPackage(far_edge_node_id string, instance_id string, pckg string) error 
 
 	data, err := os.ReadFile(pckg)
 	if err == nil {
-		data_str := string(data)
-		if len(data_str) != 0 {
-			data_str = strings.ReplaceAll(data_str, `"`, `\"`)
+		//data_str := string(data)
+		if len(data) != 0 {
+
+			var parsedData interface{}
+			if err := json.Unmarshal([]byte(data), &parsedData); err != nil {
+				fmt.Println(err)
+				return err
+			}
+			fmt.Println("Package is: ")
+			fmt.Println(parsedData)
+			var err error
+			var payloadBytes []byte
+			if payloadBytes, err = json.Marshal(
+				Payload{
+					Operation: "POST",
+					Data:      parsedData,
+				}); err != nil {
+				fmt.Println(err)
+				return err
+			}
+			fmt.Println("Payload is: ")
+			fmt.Println(payloadBytes)
+			/*data_str = strings.ReplaceAll(data_str, `"`, `\"`)
 			data_str = `\"` + data_str + `\"`
 			data_str = strings.ReplaceAll(data_str, "\n", "")
 			data_str = strings.ReplaceAll(data_str, "\t", "")
-			data_str = strings.ReplaceAll(data_str, " ", "")
-			fmt.Println("Package is: ")
-			fmt.Println(data_str)
+			data_str = strings.ReplaceAll(data_str, " ", "")*/
 			pb := &paho.Publish{
 				Topic:   far_edge_node_id + "/LWM2M_Software_Management/" + instance_id + "/Property/Package",
 				QoS:     1, // whatever value you want (0,1,2)
-				Payload: []byte(`{"operation": "POST","data": "` + data_str + `"}`),
+				Payload: payloadBytes,
 
 				Properties: &paho.PublishProperties{
 					ResponseTopic: response_topic,
@@ -433,10 +478,20 @@ func InstallPackage(far_edge_node_id string, instance_id string) error {
 	response_topic = strings.ReplaceAll(response_topic, "-", "")
 	fmt.Println(response_topic)
 
+	var err error
+	var payloadBytes []byte
+	if payloadBytes, err = json.Marshal(
+		Payload{
+			Operation: "POST",
+		}); err != nil {
+		fmt.Println(err)
+		return err
+	}
+
 	pb := &paho.Publish{
 		Topic:   far_edge_node_id + "/LWM2M_Software_Management/" + instance_id + "/Action/Install",
 		QoS:     1, // whatever value you want (0,1,2)
-		Payload: []byte(`{"operation": "POST"}`),
+		Payload: payloadBytes,
 
 		Properties: &paho.PublishProperties{
 			ResponseTopic: response_topic,
@@ -459,8 +514,7 @@ func InstallPackage(far_edge_node_id string, instance_id string) error {
 		return err
 	}
 
-	var err error
-	if _, err = mqttClient.Publish(context.Background(), pb); err != nil {
+	if _, err := mqttClient.Publish(context.Background(), pb); err != nil {
 		mqttClient.Unsubscribe(context.Background(), uns)
 		fmt.Println(err)
 		return err
@@ -511,10 +565,20 @@ func ActivatePackage(far_edge_node_id string, instance_id string) error {
 	response_topic = strings.ReplaceAll(response_topic, "-", "")
 	fmt.Println(response_topic)
 
+	var err error
+	var payloadBytes []byte
+	if payloadBytes, err = json.Marshal(
+		Payload{
+			Operation: "POST",
+		}); err != nil {
+		fmt.Println(err)
+		return err
+	}
+
 	pb := &paho.Publish{
 		Topic:   far_edge_node_id + "/LWM2M_Software_Management/" + instance_id + "/Action/Activate",
 		QoS:     1, // whatever value you want (0,1,2)
-		Payload: []byte(`{"operation": "POST"}`),
+		Payload: payloadBytes,
 
 		Properties: &paho.PublishProperties{
 			ResponseTopic: response_topic,
@@ -537,7 +601,6 @@ func ActivatePackage(far_edge_node_id string, instance_id string) error {
 		return err
 	}
 
-	var err error
 	if _, err = mqttClient.Publish(context.Background(), pb); err != nil {
 		mqttClient.Unsubscribe(context.Background(), uns)
 		fmt.Println(err)
@@ -623,10 +686,20 @@ func RemovePackage(far_edge_node_id string, package_id int) error {
 	response_topic = strings.ReplaceAll(response_topic, "-", "")
 	fmt.Println(response_topic)
 
+	var err error
+	var payloadBytes []byte
+	if payloadBytes, err = json.Marshal(
+		Payload{
+			Operation: "DELETE",
+		}); err != nil {
+		fmt.Println(err)
+		return err
+	}
+
 	pb := &paho.Publish{
 		Topic:   far_edge_node_id + "/LWM2M_Software_Management/" + strconv.Itoa(package_id),
 		QoS:     1, // whatever value you want (0,1,2)
-		Payload: []byte(`{"operation": "DELETE"}`),
+		Payload: payloadBytes,
 
 		Properties: &paho.PublishProperties{
 			ResponseTopic: response_topic,
@@ -649,7 +722,6 @@ func RemovePackage(far_edge_node_id string, package_id int) error {
 		return err
 	}
 
-	var err error
 	if _, err = mqttClient.Publish(context.Background(), pb); err != nil {
 		mqttClient.Unsubscribe(context.Background(), uns)
 		fmt.Println(err)
@@ -727,10 +799,20 @@ func GetNodeStats(nodeId string) (protocol.ResourceStatistics, error) {
 	response_topic := id.String()
 	response_topic = strings.ReplaceAll(response_topic, "-", "")
 
+	var err error
+	var payloadBytes []byte
+	if payloadBytes, err = json.Marshal(
+		Payload{
+			Operation: "GET",
+		}); err != nil {
+		fmt.Println(err)
+		return stats, err
+	}
+
 	pb := &paho.Publish{
 		Topic:   nodeId + "/Software_Package_Monitoring",
 		QoS:     1, // whatever value you want (0,1,2)
-		Payload: []byte(`{"operation": "GET"}`),
+		Payload: payloadBytes,
 
 		Properties: &paho.PublishProperties{
 			ResponseTopic: response_topic,
@@ -753,7 +835,6 @@ func GetNodeStats(nodeId string) (protocol.ResourceStatistics, error) {
 		return stats, err
 	}
 
-	var err error
 	if _, err = mqttClient.Publish(context.Background(), pb); err != nil {
 		mqttClient.Unsubscribe(context.Background(), uns)
 		fmt.Println(err)
@@ -845,10 +926,20 @@ func GetPackageStats(nodeId string, packageId int) (protocol.ResourceStatistics,
 	response_topic := id.String()
 	response_topic = strings.ReplaceAll(response_topic, "-", "")
 
+	var err error
+	var payloadBytes []byte
+	if payloadBytes, err = json.Marshal(
+		Payload{
+			Operation: "GET",
+		}); err != nil {
+		fmt.Println(err)
+		return stats, err
+	}
+
 	pb := &paho.Publish{
 		Topic:   nodeId + "/Software_Package_Monitoring",
 		QoS:     1, // whatever value you want (0,1,2)
-		Payload: []byte(`{"operation": "GET"}`),
+		Payload: payloadBytes,
 
 		Properties: &paho.PublishProperties{
 			ResponseTopic: response_topic,
@@ -871,7 +962,6 @@ func GetPackageStats(nodeId string, packageId int) (protocol.ResourceStatistics,
 		return stats, err
 	}
 
-	var err error
 	if _, err = mqttClient.Publish(context.Background(), pb); err != nil {
 		mqttClient.Unsubscribe(context.Background(), uns)
 		fmt.Println(err)
