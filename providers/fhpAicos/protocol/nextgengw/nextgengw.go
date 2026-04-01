@@ -372,8 +372,6 @@ func AddPackage(far_edge_node_id string, instance_id string, pckg string) error 
 				fmt.Println(err)
 				return err
 			}
-			fmt.Println("Package is: ")
-			fmt.Println(parsedData)
 			var err error
 			var payloadBytes []byte
 			if payloadBytes, err = json.Marshal(
@@ -384,8 +382,6 @@ func AddPackage(far_edge_node_id string, instance_id string, pckg string) error 
 				fmt.Println(err)
 				return err
 			}
-			fmt.Println("Payload is: ")
-			fmt.Println(payloadBytes)
 			/*data_str = strings.ReplaceAll(data_str, `"`, `\"`)
 			data_str = `\"` + data_str + `\"`
 			data_str = strings.ReplaceAll(data_str, "\n", "")
