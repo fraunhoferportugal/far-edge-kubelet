@@ -364,7 +364,6 @@ func AddPackage(far_edge_node_id string, instance_id string, pckg string) error 
 
 	data, err := os.ReadFile(pckg)
 	if err == nil {
-		//data_str := string(data)
 		if len(data) != 0 {
 
 			var parsedData interface{}
@@ -382,11 +381,7 @@ func AddPackage(far_edge_node_id string, instance_id string, pckg string) error 
 				fmt.Println(err)
 				return err
 			}
-			/*data_str = strings.ReplaceAll(data_str, `"`, `\"`)
-			data_str = `\"` + data_str + `\"`
-			data_str = strings.ReplaceAll(data_str, "\n", "")
-			data_str = strings.ReplaceAll(data_str, "\t", "")
-			data_str = strings.ReplaceAll(data_str, " ", "")*/
+
 			pb := &paho.Publish{
 				Topic:   far_edge_node_id + "/LWM2M_Software_Management/" + instance_id + "/Property/Package",
 				QoS:     1, // whatever value you want (0,1,2)
@@ -467,7 +462,6 @@ func AddPackage(far_edge_node_id string, instance_id string, pckg string) error 
 
 func InstallPackage(far_edge_node_id string, instance_id string) error {
 	fmt.Println("Install package of software management instance " + instance_id + " of node " + far_edge_node_id)
-	//response_topic := "install_package/" + far_edge_node_id + "/instance/" + instance_id
 	// Generate a new UUID
 	id := uuid.New()
 	response_topic := id.String()
@@ -555,7 +549,6 @@ func InstallPackage(far_edge_node_id string, instance_id string) error {
 
 func ActivatePackage(far_edge_node_id string, instance_id string) error {
 	fmt.Println("Activate package of software management instance " + instance_id + " of node " + far_edge_node_id)
-	//response_topic := "activate_package/" + far_edge_node_id + "/instance/" + instance_id
 	id := uuid.New()
 	response_topic := id.String()
 	response_topic = strings.ReplaceAll(response_topic, "-", "")
@@ -676,7 +669,6 @@ func DeployPackage(far_edge_node_id string, service_file string) (int, error) {
 
 func RemovePackage(far_edge_node_id string, package_id int) error {
 	fmt.Println("Remove package  " + strconv.Itoa(package_id) + " from " + far_edge_node_id)
-	//response_topic := "remove_package/" + far_edge_node_id + "/instance/" + strconv.Itoa(package_id)
 	id := uuid.New()
 	response_topic := id.String()
 	response_topic = strings.ReplaceAll(response_topic, "-", "")
